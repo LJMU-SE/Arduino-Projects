@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
  
-// Variable to store value from PIR
+// Variable to store value from PIR 
 int pirValue; 
 bool motionDetected;
 
@@ -18,21 +18,26 @@ enum State{
 
 State current;
 
+// Stolen from DJ Lamb TY#
+// Giving warning for comparison between signed and unsigned int....
 boolean timeDiff(unsigned long start, int specifiedDelay) {
   return (millis() - start >= specifiedDelay);
 }
 
 void setup() {
 
+  // Set current state and change time
   current = LASER_OFF;
   lastChangeTime=0;
+
+  // Setup pins
   pinMode(laserPin, OUTPUT);
   pinMode(pirPin, INPUT);
   Serial.begin(9600);
 
   // Wait for one minute to properly initialise sensor
   Serial.println("Preparing sensor.....");
-  //delay(60000);
+  delay(60000);
   Serial.println("Ready to go!");
 }
 
@@ -63,13 +68,14 @@ void loop() {
 
       case LASER_ON:
          Serial.println("Turning light off!");
-         digitalWrite(laserPin, LOW); // Turn off the laser 
+         digitalWrite(laserPin, LOW); 
          current = LASER_OFF;
          
          break;
     }  
   }
 
+  // If state change made this iteration, update the lastChangeTime variable
   if (old != current){
     lastChangeTime = millis();
   }
