@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-// Variable to store value from PIR 
-int pirValue; 
+// Variable to store value from PIR
+int pirValue;
 bool motionDetected;
 
 unsigned long lastChangeTime;
@@ -11,7 +11,8 @@ const int PIR_DELAY = 30000;
 int laserPin = 11;
 int pirPin = 7;
 
-enum State{
+enum State
+{
   LASER_ON,
   LASER_OFF,
   WARM_UP
@@ -21,77 +22,84 @@ State current;
 
 // Stolen from DJ Lamb TY#
 // Giving warning for comparison between signed and unsigned int....
-boolean timeDiff(unsigned long start, int specifiedDelay) {
+boolean timeDiff(unsigned long start, int specifiedDelay)
+{
   return (millis() - start >= specifiedDelay);
 }
 
-void setup() {
+void setup()
+{
 
   // Set current state and change time
   current = WARM_UP;
-  lastChangeTime=0;
-  
+  lastChangeTime = 0;
 
   // Setup pins
   pinMode(laserPin, OUTPUT);
   pinMode(pirPin, INPUT);
   Serial.begin(9600);
   Serial.println("Preparing sensor.....");
-
-
 }
 
-
-
-void loop() {
+void loop()
+{
 
   // Wait for one minute to properly initialise sensor
-  if (millis() >= PIR_DELAY && current == WARM_UP){
-      Serial.println("Ready to go!");
-      current = LASER_OFF;
+  if (millis() >= PIR_DELAY && current == WARM_UP)
+  {
+    Serial.println("Ready to go!");
+    current = LASER_OFF;
   }
-  
+
   // This seems smelly idk....
-  if (current != WARM_UP){
-    
-      State old = current;
-      // Get value from motion sensor 
-      motionDetected = (digitalRead(pirPin) == HIGH);
+  if (current != WARM_UP)
+  {
 
-      // See if motion detected 
-      if (motionDetected) {
+    State old = current;
+    // Get value from motion sensor
+    motionDetected = (digitalRead(pirPin) == HIGH);
 
-        // If delay time has passed letting PIR sensor reset 
-        if(timeDiff(lastChangeTime,DELAY)){
+    // See if motion detected
 
-            switch(current){
+    switch (current)
+    {
+    case LASER_OFF:
+      digitalWrite(laserPin, LOW);
+      break;// seperate state changes and actions.
+    case LASER_ON:
+      digitalWrite(laserPin, HIGH);
+      break;
+    }
 
-            case LASER_OFF:
-              Serial.println("Turning light on!");
-              digitalWrite(laserPin, HIGH);
-              current = LASER_ON;
-              
-              break;
+    if (motionDetected)
+    {
 
-            case LASER_ON:
-              Serial.println("Turning light off!");
-              digitalWrite(laserPin, LOW); 
-              current = LASER_OFF;
-              
-              break;
+      // If delay time has passed letting PIR sensor reset
+      if (timeDiff(lastChangeTime, DELAY))
+      {
 
-          } 
+        switch (current)
+        {
 
+        case LASER_OFF:
+          Serial.println("Turning light on!");
+          current = LASER_ON; // Seperatd state changes from actions
+
+          break;
+
+        case LASER_ON:
+          Serial.println("Turning light off!");
+          current = LASER_OFF;
+
+          break;
         }
-        
       }
+    }
 
-      // If state change made this iteration, update the lastChangeTime variable
-      if (old != current){
-        lastChangeTime = millis();
-      }
-
+    // If state change made this iteration, update the lastChangeTime variable
+    if (old != current)
+    {
+      lastChangeTime = millis();
+    }
   }
-  
-    
 }

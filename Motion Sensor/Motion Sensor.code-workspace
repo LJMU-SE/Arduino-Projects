@@ -3,6 +3,14 @@
 		{
 			"name": "Motion Sensor",
 			"path": "."
+		},
+		{
+			"name": "blinkRate",
+			"path": "../blinkRate"
+		},
+		{
+			"name": "jokeESP",
+			"path": "../jokeESP"
 		}
 	],
 	"settings": {}
