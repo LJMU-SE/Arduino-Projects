@@ -114,7 +114,7 @@ void getJoke(){
     return;
   }
 
-  // Get unserialised json response from API then serialise
+  // Get serialised json response from API then deserialise
   String response = http.getString();
   
   DynamicJsonDocument responseAsJson(1024); 
