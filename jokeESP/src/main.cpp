@@ -2,13 +2,26 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_ST7735.h>
+
+// Color definitions
+#define BLACK    0x0000
+#define BLUE     0x001F
+#define RED      0xF800
+#define GREEN    0x07E0
+#define CYAN     0x07FF
+#define MAGENTA  0xF81F
+#define YELLOW   0xFFE0 
+#define WHITE    0xFFFF
 
 const char* SSID = "espWifi";
 const char* PASSWORD = "ljmu1111";
 
 const int BUTTON_PIN = 2;
-
 const char* jokesAPI = "https://v2.jokeapi.dev/joke/Programming?type=twopart";
+
+// Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 enum State{
   CONNECTING,

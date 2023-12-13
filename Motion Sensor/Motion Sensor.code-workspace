@@ -5,12 +5,14 @@
 			"path": "."
 		},
 		{
-			"name": "blinkRate",
-			"path": "../blinkRate"
-		},
-		{
 			"name": "jokeESP",
 			"path": "../jokeESP"
+		},
+		{
+			"path": "../../../stabilisationTest"
+		},
+		{
+			"path": "../../../Stable"
 		}
 	],
 	"settings": {}
