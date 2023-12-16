@@ -15,13 +15,19 @@
 #define YELLOW   0xFFE0 
 #define WHITE    0xFFFF
 
+#define TFT_CS  10
+#define TFT_RST  9 
+#define TFT_DC   8
+
+void printJoke(String setup,String punchline));
+
 const char* SSID = "espWifi";
 const char* PASSWORD = "ljmu1111";
 
 const int BUTTON_PIN = 2;
 const char* jokesAPI = "https://v2.jokeapi.dev/joke/Programming?type=twopart";
 
-// Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 enum State{
   CONNECTING,
@@ -38,7 +44,7 @@ void setup(){
 
   // Initialise Serial and button pin
   Serial.begin(115200);
-  pinMode(BUTTON_PIN,INPUT);
+  pinMode(BUTTON_PIN,INPUT_PULLUP);
 
   // Set initial state
   current = CONNECTING;
@@ -65,7 +71,7 @@ void loop() {
 
   // State change switch
 
-  if (digitalRead(BUTTON_PIN) == HIGH){
+  if (digitalRead(BUTTON_PIN) == LOW){
 
       switch(current){
 
@@ -136,11 +142,40 @@ void getJoke(){
   String setup = responseAsJson["setup"];
   String punchline = responseAsJson["delivery"];
 
-  Serial.println(setup);
-  Serial.println(punchline);
+  printJoke(setup,punchline);
 
   http.end();
 
   // Change state back to idle on function exit 
   current = IDLE;
+}
+
+void printJoke(String setup, String punchline){
+
+        // initialise the display
+        tft.setFont();
+        tft.fillScreen(BLACK);
+        tft.setTextColor(MAGENTA);
+        tft.setTextSize(1);
+        
+        // draw punchline
+        tft.setCursor(0,0);
+        tft.print(setup);
+        delay(12000);
+
+        // home the cursor
+        tft.setCursor(0,0);
+        
+        // change the text color to background color
+        // to erase setup
+        tft.setTextColor(BLACK);
+        tft.print(setup);
+
+        // home the cursor
+        tft.setCursor(0,0);
+        tft.setTextColor(MAGENTA);
+        tft.print(punchline);
+
+        tft.fillScreen(BLACK);
+    
 }
